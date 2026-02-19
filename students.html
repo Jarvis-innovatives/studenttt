@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Basic Page Setup -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management | EduAdmin</title>
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="/static/style.css">
+
+    <!-- Google Fonts Connection -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <h1>🎓 EduAdmin</h1>
+        <nav>
+            <a href="/dashboard">🏠 Overview</a>
+            <a href="/students" class="active">👨‍🎓 Students</a> <!-- Current active page -->
+            <a href="/courses">📚 Courses</a>
+            <a href="/assignments">📋 Assignments</a>
+        </nav>
+        <a href="/logout" class="logout-btn">🚪 Logout</a>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+
+        <!-- Page Header -->
+        <header>
+            <div>
+                <h2>Student Management</h2>
+                <p style="color: var(--text-muted);">Manage all student records and details</p>
+            </div>
+
+            <!-- Logged-in User Info -->
+            <div class="user-info">
+                <span>{{ session['user'] }} (Admin)</span> <!-- Displays logged-in username -->
+                <div style="
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                    background: var(--primary-color);
+                    color: white;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-weight: bold;">
+                    {{ session['user'][0]|upper }} <!-- Shows first letter of username -->
+                </div>
+            </div>
+        </header>
+
+        <div class="features-container">
+
+            <!-- Main Area -->
+            <div class="main-area">
+
+                <!-- Student Directory Table -->
+                <section class="card">
+                    <h3>Student Directory</h3>
+                    <!-- Search box for filtering students -->
+                    <div style="margin-bottom: 1.5rem;">
+                        <input type="text" id="studentSearch" placeholder="Search students..."
+                            style="width: 100%; max-width: 300px;">
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Age</th>
+                                <th>Grade</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentTableBody">
+                            {% for s in students %} <!-- Loop through students list -->
+                            <tr>
+                                <td>{{ s[0] }}</td> <!-- Student ID -->
+                                <td><strong>{{ s[1] }}</strong></td> <!-- Student Name -->
+                                <td>{{ s[2] }}</td> <!-- Student Age -->
+                                <td>
+                                    <span style="background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">
+                                        {{ s[3] }} <!-- Student Grade -->
+                                    </span>
+                                </td>
+                                <td>
+                                    <!-- Edit & Delete actions -->
+                                    <a href="/edit_student/{{ s[0] }}" class="btn-edit">Edit</a>
+                                    <a href="/delete_student/{{ s[0] }}" class="btn-delete" onclick="return confirm('Are you sure?');">Delete</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% if not students %} <!-- Show message if no students -->
+                            <tr>
+                                <td colspan="5" style="text-align: center; color: var(--text-muted);">
+                                    No students added yet.
+                                </td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </section>
+
+            </div>
+
+            <!-- Sidebar Quick Actions -->
+            <div class="quick-actions">
+
+                <!-- Quick Add Student Form -->
+                <div class="card">
+                    <h3>Add New Student</h3>
+                    <form method="POST" action="/add_student">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input name="name" placeholder="John Doe" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Age</label>
+                            <input type="number" name="age" placeholder="15" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Grade</label>
+                            <select name="grade">
+                                <option>Grade 7</option>
+                                <option>Grade 8</option>
+                                <option>Grade 9</option>
+                                <option>Grade 10</option>
+                                <option>Grade 11</option>
+                                <option>Grade 12</option>
+                            </select>
+                        </div>
+                        <button type="submit">Add Student</button>
+                    </form>
+                </div>
+
+                <!-- Student Statistics Overview -->
+                <div class="card">
+                    <h3>Student Stats</h3>
+                    <div style="padding: 1rem 0;">
+                        <div style="margin-bottom: 1rem;">
+                            <p style="color: var(--text-muted); font-size: 0.9rem;">Total Students</p>
+                            <p style="font-size: 2rem; font-weight: bold; color: var(--primary-color);">
+                                {{ stats['total_students'] }} <!-- Dynamic total students count -->
+                            </p>
+                        </div>
+                        <div>
+                            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.5rem;">Students by Grade:</p>
+                            <ul style="list-style: none; font-size: 0.85rem; margin: 0; padding: 0;">
+                                {% for grade, count in stats['grades_count'].items() %}
+                                <li style="padding: 4px 0; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between;">
+                                    <span>{{ grade }}</span> <!-- Grade name -->
+                                    <span style="font-weight: bold;">{{ count }}</span> <!-- Count of students in grade -->
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Client-side student search -->
+    <script>
+        document.getElementById('studentSearch').addEventListener('keyup', function () {
+            let filter = this.value.toLowerCase();
+            let rows = document.querySelectorAll('#studentTableBody tr');
+
+            rows.forEach(row => {
+                let name = row.querySelectorAll('td')[1]?.innerText.toLowerCase(); // Get student name column
+                if (name) {
+                    row.style.display = name.includes(filter) ? '' : 'none'; // Show/hide row based on search
+                }
+            });
+        });
+    </script>
+
+</body>
+
+</html>

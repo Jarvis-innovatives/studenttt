@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- ===== Basic Setup ===== -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Dashboard | Student Management</title>
+
+    <!-- Main Styles -->
+    <link rel="stylesheet" href="/static/style.css">
+
+   
+
+<body>
+
+<!-- ================= SIDEBAR ================= -->
+<aside class="sidebar">
+    <h1>🎓 EduAdmin</h1>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="/dashboard" class="active">🏠 Overview</a>
+        <a href="/students">👨‍🎓 Students</a>
+        <a href="/courses">📚 Courses</a>
+        <a href="/assignments">📋 Assignments</a>
+    </nav>
+
+    <a href="/logout" class="logout-btn">🚪 Logout</a>
+</aside>
+
+
+<!-- ================= MAIN CONTENT ================= -->
+<main class="main-content">
+
+    <!-- ===== Header ===== -->
+    <header>
+        <div>
+            <h2>Welcome back, {{ session['user'] }}!</h2>
+            <p class="text-muted">Here's what's happening today.</p>
+        </div>
+
+        <!-- Logged-in User -->
+        <div class="user-info">
+            <span>{{ session['user'] }} (Admin)</span>
+            <div class="user-avatar">
+                {{ session['user'][0]|upper }}
+            </div>
+        </div>
+    </header>
+
+
+    <!-- ================= STAT CARDS ================= -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="label">Total Students</div>
+            <div class="value">{{ stats['total_students'] }}</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="label">Total Courses</div>
+            <div class="value">{{ stats['total_courses'] }}</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="label">Pending Tasks</div>
+            <div class="value">{{ stats['pending_assignments'] }}</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="label">Next Exam</div>
+            <div class="value">Feb 15</div>
+        </div>
+    </div>
+
+
+    <div class="features-container">
+
+        <!-- ================= LEFT SIDE ================= -->
+        <div class="main-area">
+
+            <!-- ===== STUDENTS TABLE ===== -->
+            <section class="card">
+                <h3>📋 Student Roster</h3>
+
+                <!-- Search -->
+                <input type="text" id="studentSearch" placeholder="Search students..." class="search-input">
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Age</th>
+                            <th>Grade</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentTableBody">
+
+                        {% for s in students %}
+                        <tr>
+                            <td><strong>{{ s[1] }}</strong></td>
+                            <td>{{ s[2] }}</td>
+                            <td><span class="grade-badge">{{ s[3] }}</span></td>
+                        </tr>
+                        {% endfor %}
+
+                        {% if not students %}
+                        <tr>
+                            <td colspan="3" class="text-center text-muted">
+                                No students added yet.
+                            </td>
+                        </tr>
+                        {% endif %}
+
+                    </tbody>
+                </table>
+            </section>
+
+
+            <!-- ===== ASSIGNMENTS TABLE ===== -->
+            <section class="card">
+                <h3>📋 Assignment Tracker</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Task Title</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        {% for a in assignments %}
+                        <tr>
+                            <td>{{ a[1] }}</td>
+                            <td>{{ a[2] }}</td>
+                            <td>
+                                <span class="{% if a[3]|lower == 'pending' %}
+                                                status-pending
+                                             {% else %}
+                                                status-completed
+                                             {% endif %}">
+                                    {{ a[3] }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+                        {% if not assignments %}
+                        <tr>
+                            <td colspan="3" class="text-center text-muted">
+                                No assignments posted yet.
+                            </td>
+                        </tr>
+                        {% endif %}
+
+                    </tbody>
+                </table>
+            </section>
+
+        </div>
+
+
+        <!-- ================= RIGHT SIDE ================= -->
+        <div class="quick-actions">
+
+            <!-- ===== COURSES OVERVIEW ===== -->
+            <div class="card">
+                <h3>📚 Active Courses</h3>
+                <p class="text-muted">
+                    Total Courses: <strong>{{ stats['total_courses'] }}</strong>
+                </p>
+
+                {% if courses %}
+                <ul class="simple-list">
+                    {% for c in courses %}
+                    <li>
+                        <strong>{{ c[1] }}</strong>
+                        <span class="text-muted">{{ c[2] }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted text-center">No courses registered yet.</p>
+                {% endif %}
+            </div>
+
+
+            <!-- ===== STUDENTS SUMMARY ===== -->
+            <div class="card">
+                <h3>👨‍🎓 Students Overview</h3>
+                <p class="text-muted">Total Students</p>
+                <h2>{{ stats['total_students'] }}</h2>
+            </div>
+
+
+            <!-- ===== ASSIGNMENT SUMMARY ===== -->
+            <div class="card">
+                <h3>📋 Assignment Summary.</h3>
+                <p class="text-muted">Pending Assignments</p>
+                <h2 class="status-pending">
+                    {{ stats['pending_assignments'] }}
+                </h2>
+            </div>
+
+        </div>
+
+    </div>
+</main>
+
+
+<!-- ================= SEARCH SCRIPT ================= -->
+<script>
+    // Student Search Filter
+    const searchInput = document.getElementById("studentSearch");
+    const rows = document.querySelectorAll("#studentTableBody tr");
+
+    searchInput.addEventListener("keyup", function () {
+        const filter = this.value.toLowerCase();
+
+        rows.forEach(row => {
+            const name = row.querySelector("td")?.innerText.toLowerCase();
+            row.style.display = name?.includes(filter) ? "" : "none";
+        });
+    });
+</script>
+
+</body>
+</html>

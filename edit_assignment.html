@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Assignment | EduAdmin</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .edit-container {
+            max-width: 500px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .edit-container h2 {
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .form-actions button,
+        .form-actions a {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            font-weight: 600;
+        }
+        .form-actions button {
+            background: var(--primary-color);
+            color: white;
+        }
+        .form-actions button:hover {
+            background: #2563eb;
+        }
+        .form-actions a {
+            background: #f3f4f6;
+            color: var(--text-primary);
+        }
+        .form-actions a:hover {
+            background: #e5e7eb;
+        }
+    </style>
+</head>
+
+<body>
+
+    <aside class="sidebar">
+        <h1>🎓 EduAdmin</h1>
+        <nav>
+            <a href="/dashboard">🏠 Overview</a>
+            <a href="/students">👨‍🎓 Students</a>
+            <a href="/courses">📚 Courses</a>
+            <a href="/assignments" class="active">📋 Assignments</a>
+            
+        </nav>
+        <a href="/logout" class="logout-btn">🚪 Logout</a>
+    </aside>
+
+    <main class="main-content">
+        <header>
+            <div>
+                <h2>Edit Assignment</h2>
+                <p style="color: var(--text-muted);">Update assignment information</p>
+            </div>
+            <div class="user-info">
+                <span>{{ session['user'] }} (Admin)</span>
+                <div
+                    style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary-color); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                    {{ session['user'][0]|upper }}
+                </div>
+            </div>
+        </header>
+
+        <div class="edit-container">
+            <h2>Edit Assignment Details</h2>
+            <form method="POST" action="/update_assignment/{{ assignment[0] }}">
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" name="title" value="{{ assignment[1] }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Due Date</label>
+                    <input type="date" name="due_date" value="{{ assignment[2] }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select name="status" required>
+                        <option value="{{ assignment[3] }}" selected>{{ assignment[3] }}</option>
+                        <option>Pending</option>
+                        <option>Completed</option>
+                        <option>In Progress</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit">Save Changes</button>
+                    <a href="/assignments">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+</body>
+
+</html>

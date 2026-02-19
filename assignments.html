@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Basic Page Setup -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment Management | EduAdmin</title>
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="/static/style.css">
+
+   
+</head>
+
+<body>
+
+<!-- ================= SIDEBAR ================= -->
+<aside class="sidebar">
+    <h1>🎓 EduAdmin</h1>
+
+    <!-- Navigation Links -->
+    <nav>
+        <a href="/dashboard">🏠 Overview</a>
+        <a href="/students">👨‍🎓 Students</a>
+        <a href="/courses">📚 Courses</a>
+        <a href="/assignments" class="active">📋 Assignments</a>
+    </nav>
+
+    <!-- Logout Button -->
+    <a href="/logout" class="logout-btn">🚪 Logout</a>
+</aside>
+
+<!-- ================= MAIN CONTENT ================= -->
+<main class="main-content">
+
+    <!-- Page Header -->
+    <header>
+        <div>
+            <h2>Assignment Management</h2>
+            <p style="color: var(--text-muted);">Track and manage student assignments</p>
+        </div>
+
+        <!-- Logged in User Info (Flask Session) -->
+        <div class="user-info">
+            <span>{{ session['user'] }} (Admin)</span>
+
+            <!-- User Avatar Circle -->
+            <div style="
+                width:40px;
+                height:40px;
+                border-radius:50%;
+                background:var(--primary-color);
+                color:white;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                font-weight:bold;">
+                {{ session['user'][0]|upper }}
+            </div>
+        </div>
+    </header>
+
+    <div class="features-container">
+
+        <!-- ================= ASSIGNMENT TABLE ================= -->
+        <div class="main-area">
+            <section class="card">
+                <h3>Assignment Tracker</h3>
+
+                <!-- Search Input -->
+                <input type="text" id="assignmentSearch" placeholder="Search assignments..."
+                       style="max-width:300px; width:100%; margin-bottom:1rem;">
+
+                <!-- Assignment Table -->
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Task Title</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="assignmentTableBody">
+
+                        <!-- Loop through assignments from Flask -->
+                        {% for a in assignments %}
+                        <tr>
+                            <td>{{ a[0] }}</td>
+                            <td><strong>{{ a[1] }}</strong></td>
+                            <td>{{ a[2] }}</td>
+
+                            <!-- ✅ Status with Dynamic Class -->
+                            <td>
+                                <span class="
+                                    {% if a[3]|lower == 'pending' %}status-pending
+                                    {% elif a[3]|lower == 'completed' %}status-completed
+                                    {% else %}status-progress
+                                    {% endif %}
+                                ">
+                                    {{ a[3] }}
+                                </span>
+                            </td>
+
+                            <!-- Action Buttons -->
+                            <td>
+                                <a href="/edit_assignment/{{ a[0] }}" class="btn-edit">Edit</a>
+                                <a href="/delete_assignment/{{ a[0] }}" class="btn-delete"
+                                   onclick="return confirm('Are you sure you want to delete this assignment?');">
+                                   Delete
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+                        <!-- If No Assignments -->
+                        {% if not assignments %}
+                        <tr>
+                            <td colspan="5" style="text-align:center; color:var(--text-muted);">
+                                No assignments posted yet.
+                            </td>
+                        </tr>
+                        {% endif %}
+
+                    </tbody>
+                </table>
+            </section>
+        </div>
+
+        <!-- ================= RIGHT SIDE (FORMS + STATS) ================= -->
+        <div class="quick-actions">
+
+            <!-- Add Assignment Form -->
+            <div class="card">
+                <h3>Post New Assignment</h3>
+                <form method="POST" action="/add_assignment">
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Due Date</label>
+                        <input type="date" name="due_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select name="status">
+                            <option>Pending</option>
+                            <option>Completed</option>
+                            <option>In Progress</option>
+                        </select>
+                    </div>
+                    <button type="submit">Post to Board</button>
+                </form>
+            </div>
+
+            <!-- Assignment Summary Section -->
+            <div class="card">
+                <h3>Assignment Summary</h3>
+                <div style="padding:1rem 0;">
+                    <p>Total Assignments</p>
+                    <h2>{{ stats['total_assignments'] }}</h2>
+                    <p>Pending</p>
+                    <h3 class="status-pending">{{ stats['pending_assignments'] }}</h3>
+                    <p>Completed</p>
+                    <h3 class="status-completed">{{ stats['completed_assignments'] }}</h3>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</main>
+
+<!-- ================= JAVASCRIPT SEARCH ================= -->
+<script>
+    const searchInput = document.getElementById("assignmentSearch");
+    const tableRows = document.querySelectorAll("#assignmentTableBody tr");
+
+    searchInput.addEventListener("keyup", function () {
+        const filter = this.value.toLowerCase();
+        tableRows.forEach(row => {
+            const titleCell = row.querySelectorAll("td")[1];
+            if (titleCell) {
+                row.style.display = titleCell.innerText.toLowerCase().includes(filter) ? "" : "none";
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

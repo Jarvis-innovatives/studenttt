@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Basic Page Setup -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Student | EduAdmin</title>
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="/static/style.css">
+
+   
+    <!-- Page-specific styles for the edit form -->
+    <style>
+        /* Container for the edit form */
+        .edit-container {
+            max-width: 500px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Heading inside the form */
+        .edit-container h2 {
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        /* Form group spacing */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Labels styling */
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Inputs and select styling */
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        /* Focus effect for better UX */
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Action buttons container */
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        /* Buttons and links inside form-actions */
+        .form-actions button,
+        .form-actions a {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        /* Submit button styling */
+        .form-actions button {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .form-actions button:hover {
+            background: #2563eb;
+        }
+
+        /* Cancel link styling */
+        .form-actions a {
+            background: #f3f4f6;
+            color: var(--text-primary);
+        }
+
+        .form-actions a:hover {
+            background: #e5e7eb;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <h1>🎓 EduAdmin</h1>
+        <nav>
+            <a href="/dashboard">🏠 Overview</a>
+            <a href="/students" class="active">👨‍🎓 Students</a>
+            <a href="/courses">📚 Courses</a>
+            <a href="/assignments">📋 Assignments</a>
+        </nav>
+        <a href="/logout" class="logout-btn">🚪 Logout</a>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+
+        <!-- Page Header -->
+        <header>
+            <div>
+                <h2>Edit Student</h2>
+                <p style="color: var(--text-muted);">Update student information</p>
+            </div>
+
+            <!-- Logged-in User Info -->
+            <div class="user-info">
+                <span>{{ session['user'] }} (Admin)</span>
+                <div style="
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                    background: var(--primary-color);
+                    color: white;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-weight: bold;">
+                    {{ session['user'][0]|upper }}
+                </div>
+            </div>
+        </header>
+
+        <!-- Edit Form Container -->
+        <div class="edit-container">
+            <h2>Edit Student Details</h2>
+            <form method="POST" action="/update_student/{{ student[0] }}">
+                
+                <!-- Full Name Input -->
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" name="name" value="{{ student[1] }}" required>
+                </div>
+
+                <!-- Age Input -->
+                <div class="form-group">
+                    <label>Age</label>
+                    <input type="number" name="age" value="{{ student[2] }}" required>
+                </div>
+
+                <!-- Grade Selection -->
+                <div class="form-group">
+                    <label>Grade</label>
+                    <select name="grade" required>
+                        <!-- Keep current grade selected -->
+                        <option value="{{ student[3] }}" selected>{{ student[3] }}</option>
+                        <option>Grade 7</option>
+                        <option>Grade 8</option>
+                        <option>Grade 9</option>
+                        <option>Grade 10</option>
+                        <option>Grade 11</option>
+                        <option>Grade 12</option>
+                    </select>
+                </div>
+
+                <!-- Form Action Buttons -->
+                <div class="form-actions">
+                    <button type="submit">Save Changes</button>
+                    <a href="/students">Cancel</a>
+                </div>
+
+            </form>
+        </div>
+    </main>
+
+</body>
+
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Basic Page Setup -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | EduAdmin</title>
+
+    <!-- External CSS for styling -->
+    <link rel="stylesheet" href="/static/style.css">
+
+    <!-- Google Fonts Connection -->
+    
+</head>
+
+<body class="auth-body"> <!-- Body class for authentication pages -->
+
+    <!-- Sign-Up Card Container -->
+    <div class="auth-card">
+        <h1>🎓 EduAdmin</h1> <!-- App / System Title -->
+        <h2>Create Account</h2> <!-- Page subtitle -->
+
+        <!-- Sign-Up Form -->
+        <form method="POST" action="/register">
+            <!-- Full Name input -->
+            <div class="form-group">
+                <input name="name" placeholder="Full Name" required>
+            </div>
+
+            <!-- Email input -->
+            <div class="form-group">
+                <input type="email" name="email" placeholder="Email Address" required>
+            </div>
+
+            <!-- Password input -->
+            <div class="form-group">
+                <input type="password" name="password" placeholder="Create Password" required>
+            </div>
+
+            <!-- Submit button -->
+            <button type="submit">Get Started</button>
+        </form>
+
+        <!-- Link to login page -->
+        <p>Already have an account? <a href="/">Log In</a></p>
+    </div>
+
+</body>
+
+</html>

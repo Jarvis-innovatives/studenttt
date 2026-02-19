@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Management | EduAdmin</title>
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="/static/style.css">
+
+  
+</head>
+
+<body>
+
+    <!-- ================= SIDEBAR ================= -->
+    <aside class="sidebar">
+        <h1>🎓 EduAdmin</h1>
+        <nav>
+            <a href="/dashboard">🏠 Overview</a>
+            <a href="/students">👨‍🎓 Students</a>
+            <a href="/courses" class="active">📚 Courses</a>
+            <a href="/assignments">📋 Assignments</a>
+        </nav>
+        <a href="/logout" class="logout-btn">🚪 Logout</a>
+    </aside>
+
+    <!-- ================= MAIN CONTENT ================= -->
+    <main class="main-content">
+
+        <!-- Page Header -->
+        <header>
+            <div>
+                <h2>Course Management</h2>
+                <p class="text-muted">Manage all courses and instructors</p>
+            </div>
+            <div class="user-info">
+                <span>{{ session['user'] }} (Admin)</span>
+                <div class="user-avatar">
+                    {{ session['user'][0]|upper }}
+                </div>
+            </div>
+        </header>
+
+        <div class="features-container">
+
+            <!-- ================= COURSES TABLE ================= -->
+            <div class="main-area">
+                <section class="card">
+                    <h3>Courses List</h3>
+
+                    <!-- Search Input -->
+                    <input type="text" id="courseSearch" placeholder="Search courses..." class="search-input">
+
+                    <!-- Courses Table -->
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Course Name</th>
+                                <th>Teacher</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="courseTableBody">
+
+                            <!-- Loop through courses from Flask -->
+                            {% for c in courses %}
+                            <tr>
+                                <td>{{ c[0] }}</td>
+                                <td><strong>{{ c[1] }}</strong></td>
+                                <td>{{ c[2] }}</td>
+                                <td>
+                                    <a href="/edit_course/{{ c[0] }}" class="btn-edit">Edit</a>
+                                    <a href="/delete_course/{{ c[0] }}" class="btn-delete" onclick="return confirm('Are you sure?');">Delete</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                            <!-- If No Courses -->
+                            {% if not courses %}
+                            <tr>
+                                <td colspan="4" class="text-center text-muted">No courses registered yet.</td>
+                            </tr>
+                            {% endif %}
+
+                        </tbody>
+                    </table>
+                </section>
+            </div>
+
+            <!-- ================= QUICK ACTIONS / ADD COURSE ================= -->
+            <div class="quick-actions">
+
+                <!-- Add Course Form -->
+                <div class="card">
+                    <h3>Register New Course</h3>
+                    <form method="POST" action="/add_course">
+                        <div class="form-group">
+                            <label>Course Name</label>
+                            <input name="course_name" placeholder="e.g. information technology" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Teacher</label>
+                            <input name="teacher" placeholder="e.g. Dr. Smith" required>
+                        </div>
+                        <button type="submit">Register Course</button>
+                    </form>
+                </div>
+
+                <!-- Course Summary -->
+                <div class="card">
+                    <h3>Course Summary</h3>
+                    <p class="text-muted">Total Courses</p>
+                    <h2 class="summary-number">{{ stats['total_courses'] }}</h2>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ================= JAVASCRIPT SEARCH ================= -->
+    <script>
+        // Client-side search for courses
+        const courseSearch = document.getElementById('courseSearch');
+        const courseRows = document.querySelectorAll('#courseTableBody tr');
+
+        courseSearch.addEventListener('keyup', () => {
+            const filter = courseSearch.value.toLowerCase();
+            courseRows.forEach(row => {
+                const courseName = row.querySelectorAll('td')[1]?.innerText.toLowerCase();
+                row.style.display = courseName?.includes(filter) ? '' : 'none';
+            });
+        });
+    </script>
+
+</body>
+</html>

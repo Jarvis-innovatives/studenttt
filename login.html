@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Basic Page Setup -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | EduAdmin</title>
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="/static/style.css">
+
+    <!-- Google Fonts Connection -->
+    
+</head>
+
+<body class="auth-body"> <!-- Body class used for login page specific styles -->
+
+    <!-- Login Card Container -->
+    <div class="auth-card">
+        <h1>Student Management System</h1> <!-- App / System Title -->
+        <h2></h2> <!-- Optional subtitle (empty here) -->
+
+        <!-- Login Form -->
+        <form method="POST" action="/authenticate">
+            <!-- Email input -->
+            <div class="form-group">
+                <input type="email" name="email" placeholder="Email Address" required>
+            </div>
+
+            <!-- Password input -->
+            <div class="form-group">
+                <input type="password" name="password" placeholder="Password" required>
+            </div>
+
+            <!-- Submit button -->
+            <button type="submit">Log In</button>
+        </form>
+
+        <!-- Signup link -->
+        <p>Don't have an account? <a href="/signup">Sign Up</a></p>
+    </div>
+
+</body>
+
+</html>
